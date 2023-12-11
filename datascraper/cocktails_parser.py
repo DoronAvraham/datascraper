@@ -1,4 +1,4 @@
-from cocktail import Cocktail
+from datascraper.cocktail import Cocktail
 
 class CocktailsParser: 
     DRINKS = "drinks"
@@ -18,6 +18,9 @@ class CocktailsParser:
         """
         cocktails = []
         cocktails_list = cocktails_json[self.DRINKS]
+        if not cocktails_list:
+            return cocktails
+
         for cocktail in cocktails_list:
             drink_id = cocktail[self.__DRINK_ID]
             name = cocktail[self.__DRINK_NAME]
