@@ -1,6 +1,7 @@
 import string
 from datascraper.cocktails_parser import CocktailsParser
 from datascraper.database import CocktailsDB
+from datascraper.db_handlers import handler_postgresql
 from datascraper.remote_repo import RemoteRepo
 
 class App:
@@ -8,7 +9,7 @@ class App:
     def run(self):
         repo = RemoteRepo()
         parser = CocktailsParser()
-        db = CocktailsDB()
+        db = CocktailsDB(handler_postgresql)
         db.create_table()
 
         #all_letters_and_numbers = ["a","_","b"] # For quick tests.

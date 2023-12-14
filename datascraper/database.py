@@ -3,14 +3,16 @@ import sqlite3
 
 class CocktailsDB:
 
-    __DB_NAME = "my_cocktails_bar.db"
     __TABLE_COCKTAILS = "Cocktails"
     __TABLE_INGREDIENTS = "Ingredients"
+
+    def __init__(self, handler):
+        self.handler = handler
 
 
     def create_table(self):
 
-        with sqlite3.connect(self.__DB_NAME) as connection:
+        with self.handler() as connection:
             cursor = connection.cursor()
             # Create Cocktails table
             cursor.execute('''
@@ -26,7 +28,7 @@ class CocktailsDB:
             # Create Ingredients table
             cursor.execute('''
                 CREATE TABLE Ingredients (
-                    id INTEGER PRIMARY KEY,
+                    id SERIAL PRIMARY KEY,
                     cocktail_id INTEGER,
                     ingredient TEXT NOT NULL,
                     measure TEXT,
@@ -37,14 +39,14 @@ class CocktailsDB:
             connection.commit()
 
     def insert_cocktails(self, cocktails):
-        with sqlite3.connect(self.__DB_NAME) as connection:
+        with self.handler() as connection:
             cursor = connection.cursor()
 
             for cocktail in cocktails:
                 # Insert data into Cocktails table
                 cursor.execute('''
                 INSERT INTO Cocktails (id, name, instructions, thumbnail, image)
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s)
                 ''', (cocktail.id, cocktail.name,
                     cocktail.instructions,
                     cocktail.thumbnail_url,
@@ -53,14 +55,14 @@ class CocktailsDB:
                 for i, ingredient in enumerate(cocktail.ingredients):
                     cursor.execute('''
                         INSERT INTO Ingredients (cocktail_id, ingredient, measure)
-                        VALUES (?, ?, ?)
+                        VALUES (%s, %s, %s)
                     ''', (cocktail.id, ingredient, cocktail.measures[i]))
 
             connection.commit()
 
 
     def tables_exist_and_filled(self):
-        with sqlite3.connect(self.__DB_NAME) as connection:
+        with self.handler() as connection:
             cursor = connection.cursor()
 
             cursor.execute(f"SELECT (SELECT COUNT(*) FROM {self.__TABLE_COCKTAILS}) > 0)")
@@ -74,7 +76,3 @@ class CocktailsDB:
             table_filled = bool(result[0])
 
             return table_filled
-
-    def delete_db(self):
-        if os.path.exists(self.__DB_NAME):
-            os.remove(self.__DB_NAME)
