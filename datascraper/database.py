@@ -1,6 +1,3 @@
-import os
-import sqlite3
-
 class CocktailsDB:
 
     __TABLE_COCKTAILS = "Cocktails"
@@ -12,7 +9,7 @@ class CocktailsDB:
 
     def create_table(self):
 
-        with self.handler() as connection:
+        with self.handler as connection:
             cursor = connection.cursor()
             # Create Cocktails table
             cursor.execute('''
@@ -39,7 +36,7 @@ class CocktailsDB:
             connection.commit()
 
     def insert_cocktails(self, cocktails):
-        with self.handler() as connection:
+        with self.handler as connection:
             cursor = connection.cursor()
 
             for cocktail in cocktails:
@@ -62,7 +59,7 @@ class CocktailsDB:
 
 
     def tables_exist_and_filled(self):
-        with self.handler() as connection:
+        with self.handler as connection:
             cursor = connection.cursor()
 
             cursor.execute(f"SELECT (SELECT COUNT(*) FROM {self.__TABLE_COCKTAILS}) > 0)")

@@ -9,10 +9,10 @@ class App:
     def run(self):
         repo = RemoteRepo()
         parser = CocktailsParser()
-        db = CocktailsDB(handler_postgresql)
+        handler = handler_postgresql()
+        db = CocktailsDB(handler)
         db.create_table()
 
-        #all_letters_and_numbers = ["a","_","b"] # For quick tests.
         all_letters_and_numbers = string.ascii_lowercase + string.digits
         for letter in all_letters_and_numbers:
             cocktails_json = repo.get_data(letter)
